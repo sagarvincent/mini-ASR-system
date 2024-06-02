@@ -42,7 +42,6 @@ def convert_mp3_to_tensor(input_file):
         print(f"Error during conversion: {e}")
         return None
 
-
 def convert_all_mp3_to_tensor(mp3_directory):
     tensor_list = []
     
@@ -89,39 +88,7 @@ def Audio2Tensor(file_path, sr, n_mels, hop_length):
     # Return the resulting tensor
     return log_melspec
 
-class AudioDataset(Dataset):
 
-    def __init__(self, directory, sr=22050, n_mels=64, hop_length=512):
-        self.directory = directory
-        self.sr = sr
-        self.n_mels = n_mels
-        self.hop_length = hop_length
-        self.file_paths = glob.glob(os.path.join(directory, '*.mp3'))
-
-    def __len__(self):
-        return len(self.file_paths)
-    
-    def __getitem__(self, idx):
-        file_path = self.file_paths[idx]
-        try:
-            log_melspec = Audio2Tensor(file_path, sr=self.sr, n_mels=self.n_mels, hop_length=self.hop_length)
-            return log_melspec, file_path
-        except Exception as e:
-            print(f"Error processing file {file_path}: {e}")
-            return None, file_path
-        
-    # Collate function to handle None values
-
-def collate_fn(batch):
-
-    # Filter out None values
-    batch = [(data, path) for data, path in batch if data is not None]
-    if not batch:
-        return torch.tensor([]), []
-    
-    # Separate data and file paths
-    data, paths = zip(*batch)
-    return torch.stack(data), paths
 
 
 if __name__ == "__main__":
